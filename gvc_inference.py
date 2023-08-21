@@ -15,7 +15,7 @@ from grad.model import GradTTS
 def load_gvc_model(checkpoint_path, model):
     assert os.path.isfile(checkpoint_path)
     checkpoint_dict = torch.load(checkpoint_path, map_location="cpu")
-    saved_state_dict = checkpoint_dict
+    saved_state_dict = checkpoint_dict["model"]
     state_dict = model.state_dict()
     new_state_dict = {}
     for k, v in state_dict.items():
