@@ -5,7 +5,7 @@ train:
   log_dir: 'logs/grad_svc'
   n_epochs: 10000
   learning_rate: 1e-5
-  batch_size: 16
+  batch_size: 8
   test_size: 4
   test_step: 1
   save_step: 1
