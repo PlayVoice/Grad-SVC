@@ -41,7 +41,7 @@ def train(hps, chkpt_path=None):
 
     # Load Pretrain
     if os.path.isfile(hps.train.pretrain):
-        logger.info("Start from Grad_SVC pretrain model: %s" % hps.train.pretrain)
+        print("Start from Grad_SVC pretrain model: %s" % hps.train.pretrain)
         checkpoint = torch.load(hps.train.pretrain, map_location='cpu')
         load_model(model, checkpoint['model'])
 
@@ -53,7 +53,7 @@ def train(hps, chkpt_path=None):
 
     # Load Continue
     if chkpt_path is not None:
-        logger.info("Resuming from checkpoint: %s" % chkpt_path)
+        print("Resuming from checkpoint: %s" % chkpt_path)
         checkpoint = torch.load(chkpt_path, map_location='cpu')
         model.load_state_dict(checkpoint['model'])
         optim.load_state_dict(checkpoint['optim'])
@@ -160,4 +160,4 @@ def train(hps, chkpt_path=None):
             'steps': iteration,
 
         }, save_path)
-        logger.info("Saved checkpoint to: %s" % save_path)
+        print("Saved checkpoint to: %s" % save_path)
