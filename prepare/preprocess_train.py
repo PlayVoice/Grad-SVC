@@ -9,7 +9,7 @@ def print_error(info):
 if __name__ == "__main__":
     os.makedirs("./files/", exist_ok=True)
 
-    rootPath = "./data_svc/waves-32k/"
+    rootPath = "./data_gvc/waves-32k/"
     all_items = []
     for spks in os.listdir(f"./{rootPath}"):
         if not os.path.isdir(f"./{rootPath}/{spks}"):
@@ -19,10 +19,10 @@ if __name__ == "__main__":
             if file.endswith(".wav"):
                 file = file[:-4]
 
-                path_mel = f"./data_svc/mel/{spks}/{file}.mel.pt"
-                path_vec = f"./data_svc/hubert/{spks}/{file}.vec.npy"
-                path_pit = f"./data_svc/pitch/{spks}/{file}.pit.npy"
-                path_spk = f"./data_svc/speaker/{spks}/{file}.spk.npy"
+                path_mel = f"./data_gvc/mel/{spks}/{file}.mel.pt"
+                path_vec = f"./data_gvc/hubert/{spks}/{file}.vec.npy"
+                path_pit = f"./data_gvc/pitch/{spks}/{file}.pit.npy"
+                path_spk = f"./data_gvc/speaker/{spks}/{file}.spk.npy"
 
                 has_error = 0
                 if not os.path.isfile(path_mel):
