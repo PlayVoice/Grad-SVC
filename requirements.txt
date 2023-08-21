@@ -7,4 +7,5 @@ tqdm
 einops
 fsspec
 omegaconf
+pyworld
 praat-parselmouth
