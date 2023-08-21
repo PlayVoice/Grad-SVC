@@ -4,6 +4,11 @@
 This project is named as Grad-SVC, or GVC for short. Its core technology is diffusion, but so different from other diffusion based SVC models. Codes are adapted from Grad-TTS and so-vits-svc-5.0. So the features from so-vits-svc-5.0 will be used in this project.
 
 The project will be completed in the coming months ~~~
+
+[Grad-TTS: A Diffusion Probabilistic Model for Text-to-Speech](https://arxiv.org/abs/2105.06337)
+
+![grad_tts](./assets/grad_tts.jpg)
+
 </div>
 
 ## Setup Environment
