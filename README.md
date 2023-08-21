@@ -196,3 +196,10 @@ https://github.com/mozilla/TTS
 https://github.com/bshall/soft-vc
 
 https://github.com/maxrmorrison/torchcrepe
+
+## QQ Grop
+<div align="center">
+
+![X·SING-QQ](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/dfbb4740-447e-40f0-9193-c974c4b6ceb0)
+
+</div>
