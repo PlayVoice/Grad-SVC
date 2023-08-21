@@ -1,0 +1,10 @@
+librosa
+soundfile
+matplotlib
+tensorboard
+transformers
+tqdm
+einops
+fsspec
+omegaconf
+praat-parselmouth
