@@ -1,11 +1,14 @@
 import math
 import torch
 
+from grad.ssim import SSIM
 from grad.base import BaseModule
 from grad.encoder import TextEncoder
 from grad.diffusion import Diffusion
 from grad.utils import f0_to_coarse, rand_ids_segments, slice_segments
 
+SpeakerLoss = torch.nn.CosineEmbeddingLoss()
+SsimLoss = SSIM()
 
 class GradTTS(BaseModule):
     def __init__(self, n_mels, n_vecs, n_pits, n_spks, n_embs, 
@@ -66,7 +69,7 @@ class GradTTS(BaseModule):
         pit = torch.transpose(pit, 1, -1)
 
         # Get encoder_outputs `mu_x`
-        mu_x, mask_x = self.encoder(lengths, vec, pit, spk)
+        mu_x, mask_x, _ = self.encoder(lengths, vec, pit, spk)
         encoder_outputs = mu_x
 
         # Sample latent representation from terminal distribution N(mu_y, I)
@@ -76,7 +79,7 @@ class GradTTS(BaseModule):
 
         return encoder_outputs, decoder_outputs
 
-    def compute_loss(self, lengths, vec, pit, spk, mel, out_size):
+    def compute_loss(self, lengths, vec, pit, spk, mel, out_size, skip_diff=False):
         """
         Computes 2 losses:
             1. prior loss: loss between mel-spectrogram and encoder outputs.
@@ -98,28 +101,40 @@ class GradTTS(BaseModule):
         pit = self.pit_emb(f0_to_coarse(pit))
 
         # Get speaker embedding
-        spk = self.spk_emb(spk)
+        spk_64 = self.spk_emb(spk)
 
         # Transpose
         vec = torch.transpose(vec, 1, -1)
         pit = torch.transpose(pit, 1, -1)
 
         # Get encoder_outputs `mu_x`
-        mu_x, mask_x = self.encoder(lengths, vec, pit, spk)
-
-        # Cut a small segment of mel-spectrogram in order to increase batch size
-        if not isinstance(out_size, type(None)):
-            ids = rand_ids_segments(lengths, out_size)
-            mel = slice_segments(mel, ids, out_size)
-
-            mask_y = slice_segments(mask_x, ids, out_size)
-            mu_y = slice_segments(mu_x, ids, out_size)
-
-        # Compute loss of score-based decoder
-        diff_loss, xt = self.decoder.compute_loss(spk, mel, mask_y, mu_y)
+        mu_x, mask_x, spk_preds = self.encoder(lengths, vec, pit, spk_64, training=True)
 
         # Compute loss between aligned encoder outputs and mel-spectrogram
-        prior_loss = torch.sum(0.5 * ((mel - mu_y) ** 2 + math.log(2 * math.pi)) * mask_y)
-        prior_loss = prior_loss / (torch.sum(mask_y) * self.n_mels)
+        prior_loss = torch.sum(0.5 * ((mel - mu_x) ** 2 + math.log(2 * math.pi)) * mask_x)
+        prior_loss = prior_loss / (torch.sum(mask_x) * self.n_mels)
 
-        return prior_loss, diff_loss
+        # Mel ssim
+        mel_loss = SsimLoss(mu_x, mel, mask_x)
+
+        # Compute loss of speaker for GRL
+        spk_loss = SpeakerLoss(spk, spk_preds, torch.Tensor(spk_preds.size(0))
+                               .to(spk.device).fill_(1.0))
+
+        # Compute loss of score-based decoder
+        if skip_diff:  # 4.00 it/s
+            diff_loss = prior_loss.clone()
+            diff_loss.fill_(0)
+        else:  # 1.66 it/s
+            # Cut a small segment of mel-spectrogram in order to increase batch size
+            if not isinstance(out_size, type(None)):
+                ids = rand_ids_segments(lengths, out_size)
+                mel = slice_segments(mel, ids, out_size)
+
+                mask_y = slice_segments(mask_x, ids, out_size)
+                mu_y = slice_segments(mu_x, ids, out_size)
+
+            diff_loss, xt = self.decoder.compute_loss(
+                spk_64, mel, mask_y, mu_y)
+
+        return prior_loss, diff_loss, mel_loss, spk_loss
