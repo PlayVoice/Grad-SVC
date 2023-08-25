@@ -1,15 +1,21 @@
 <div align="center">
 <h1> Grad-SVC based Grad-TTS from HUAWEI Noah's Ark Lab </h1>
 
-This project is named as Grad-SVC, or GVC for short. Its core technology is diffusion, but so different from other diffusion based SVC models. Codes are adapted from Grad-TTS and so-vits-svc-5.0. So the features from so-vits-svc-5.0 will be used in this project.
+This project is named as [Grad-SVC](), or [GVC]() for short. Its core technology is diffusion, but so different from other diffusion based SVC models. Codes are adapted from `Grad-TTS` and `so-vits-svc-5.0`. So the features from `so-vits-svc-5.0` will be used in this project.
 
 The project will be completed in the coming months ~~~
 
 [Grad-TTS: A Diffusion Probabilistic Model for Text-to-Speech](https://arxiv.org/abs/2105.06337)
 
 ![grad_tts](./assets/grad_tts.jpg)
-
 </div>
+
+## Features
+1. Supported multi-speaker based on speaker encoder
+
+2. No electronic sound
+
+3. No speaker leaky, by pure `GRL`
 
 ## Setup Environment
 1. Install project dependencies
@@ -186,19 +192,21 @@ data_gvc/
 
 ## Code sources and references
 
-https://github.com/huawei-noah/Speech-Backbones/blob/main/Grad-TTS
+https://github.com/huawei-noah/Speech-Backbones/blob/main/Grad-TTS [paper](https://arxiv.org/abs/2105.06337)
 
 https://github.com/facebookresearch/speech-resynthesis [paper](https://arxiv.org/abs/2104.00355)
 
-https://github.com/jaywalnut310/vits [paper](https://arxiv.org/abs/2106.06103)
+https://github.com/shivammehta25/Diff-TTSG [paper](https://arxiv.org/abs/2306.09417)
 
-https://github.com/NVIDIA/BigVGAN [paper](https://arxiv.org/abs/2206.04658)
+https://github.com/jaywalnut310/vits [paper](https://arxiv.org/abs/2106.06103)
 
 https://github.com/mindslab-ai/univnet [paper](https://arxiv.org/abs/2106.07889)
 
-https://github.com/mozilla/TTS
+https://github.com/NVIDIA/BigVGAN [paper](https://arxiv.org/abs/2206.04658)
 
-https://github.com/bshall/soft-vc
+https://github.com/bshall/soft-vc [paper](https://arxiv.org/abs/2111.02392)
+
+https://github.com/mozilla/TTS
 
 https://github.com/maxrmorrison/torchcrepe
 
