@@ -207,6 +207,8 @@ https://github.com/facebookresearch/speech-resynthesis [paper](https://arxiv.org
 
 https://github.com/shivammehta25/Diff-TTSG [paper](https://arxiv.org/abs/2306.09417)
 
+https://github.com/lmnt-com/wavegrad [paper](https://arxiv.org/pdf/2009.00713.pdf)
+
 https://github.com/jaywalnut310/vits [paper](https://arxiv.org/abs/2106.06103)
 
 https://github.com/mindslab-ai/univnet [paper](https://arxiv.org/abs/2106.07889)
