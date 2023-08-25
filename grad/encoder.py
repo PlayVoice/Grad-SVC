@@ -2,6 +2,7 @@ import math
 import torch
 
 from grad.base import BaseModule
+from grad.reversal import SpeakerClassifier
 from grad.utils import sequence_mask, convert_pad_shape
 
 
@@ -277,6 +278,11 @@ class TextEncoder(BaseModule):
                                    n_layers=3,
                                    p_dropout=0.5)
 
+        self.speaker = SpeakerClassifier(
+            n_channels,
+            256,  # n_spks: 256
+        )
+
         self.encoder = Encoder(n_channels + n_embs + n_embs,
                                filter_channels,
                                n_heads,
@@ -287,14 +293,18 @@ class TextEncoder(BaseModule):
 
         self.proj_m = torch.nn.Conv1d(n_channels + n_embs + n_embs, n_mels, 1)
 
-    def forward(self, x_lengths, x, pit, spk):
+    def forward(self, x_lengths, x, pit, spk, training=False):
         x_mask = torch.unsqueeze(sequence_mask(x_lengths, x.size(2)), 1).to(x.dtype)
         # despeaker
         x = self.prenet(x, x_mask)
+        if training:
+            r = self.speaker(x)
+        else:
+            r = None
         # pitch + speaker
         spk = spk.unsqueeze(-1).repeat(1, 1, x.shape[-1])
         x = torch.cat([x, pit], dim=1)
         x = torch.cat([x, spk], dim=1)
         x = self.encoder(x, x_mask)
         mu = self.proj_m(x) * x_mask
-        return mu, x_mask
+        return mu, x_mask, r
