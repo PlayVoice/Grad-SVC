@@ -9,7 +9,7 @@ The project will be completed in the coming months ~~~
 
 ![grad_tts](./assets/grad_tts.jpg)
 
-![grad_svc](./assets/grad_svc.jpg)
+![grad_svc_framwork](./assets/grad_svc_framework.jpg)
 
 The framework of grad-svc
 
