@@ -44,6 +44,7 @@ def train(hps, chkpt_path=None):
         print("Start from Grad_SVC pretrain model: %s" % hps.train.pretrain)
         checkpoint = torch.load(hps.train.pretrain, map_location='cpu')
         load_model(model, checkpoint['model'])
+        hps.train.learning_rate = 2e-5
 
     print('Initializing optimizer...')
     optim = torch.optim.Adam(params=model.parameters(), lr=hps.train.learning_rate)
@@ -69,7 +70,7 @@ def train(hps, chkpt_path=None):
         save_plot(mel.squeeze(), f'{hps.train.log_dir}/original_{i}.png')
 
     print('Start training...')
-    
+    skip_diff_train = True
     for epoch in range(initepoch, hps.train.n_epochs + 1):
         model.eval()
         print('Synthesis...')
@@ -106,6 +107,8 @@ def train(hps, chkpt_path=None):
 
         prior_losses = []
         diff_losses = []
+        mel_losses = []
+        spk_losses = []
         with tqdm(loader, total=len(train_dataset)//hps.train.batch_size) as progress_bar:
             for batch in progress_bar:
                 model.zero_grad()
@@ -116,9 +119,11 @@ def train(hps, chkpt_path=None):
                 spk = batch['spk'].cuda()
                 mel = batch['mel'].cuda()
 
-                prior_loss, diff_loss = model.compute_loss(lengths, vec, pit, spk,
-                                                           mel, out_size=out_size)
-                loss = sum([prior_loss, diff_loss])
+                prior_loss, diff_loss, mel_loss, spk_loss = model.compute_loss(
+                    lengths, vec, pit, spk,
+                    mel, out_size=out_size,
+                    skip_diff=skip_diff_train)
+                loss = sum([prior_loss, diff_loss, mel_loss, spk_loss])
                 loss.backward()
 
                 enc_grad_norm = torch.nn.utils.clip_grad_norm_(model.encoder.parameters(), 
@@ -127,6 +132,8 @@ def train(hps, chkpt_path=None):
                                                             max_norm=1)
                 optim.step()
 
+                logger.add_scalar('training/mel_loss', mel_loss,
+                                global_step=iteration)
                 logger.add_scalar('training/prior_loss', prior_loss,
                                 global_step=iteration)
                 logger.add_scalar('training/diffusion_loss', diff_loss,
@@ -136,18 +143,28 @@ def train(hps, chkpt_path=None):
                 logger.add_scalar('training/decoder_grad_norm', dec_grad_norm,
                                 global_step=iteration)
 
-                msg = f'Epoch: {epoch}, iteration: {iteration} | prior_loss: {prior_loss.item():.3f}, diff_loss: {diff_loss.item():.3f}'
+                msg = f'Epoch: {epoch}, iteration: {iteration} | ' 
+                msg = msg + f'prior_loss: {prior_loss.item():.3f}, '
+                msg = msg + f'diff_loss: {diff_loss.item():.3f}, '
+                msg = msg + f'mel_loss: {mel_loss.item():.3f}, '
+                msg = msg + f'spk_loss: {spk_loss.item():.3f}, '
                 progress_bar.set_description(msg)
 
                 prior_losses.append(prior_loss.item())
                 diff_losses.append(diff_loss.item())
+                mel_losses.append(mel_loss.item())
+                spk_losses.append(spk_loss.item())
                 iteration += 1
 
         msg = 'Epoch %d: ' % (epoch)
+        msg += '| spk loss = %.3f ' % np.mean(spk_losses)
+        msg += '| mel loss = %.3f ' % np.mean(mel_losses)
         msg += '| prior loss = %.3f ' % np.mean(prior_losses)
         msg += '| diffusion loss = %.3f\n' % np.mean(diff_losses)
         with open(f'{hps.train.log_dir}/train.log', 'a') as f:
             f.write(msg)
+        if (np.mean(prior_losses) < 1.05):
+            skip_diff_train = False
 
         if epoch % hps.train.save_step > 0:
             continue
