@@ -8,6 +8,11 @@ The project will be completed in the coming months ~~~
 [Grad-TTS: A Diffusion Probabilistic Model for Text-to-Speech](https://arxiv.org/abs/2105.06337)
 
 ![grad_tts](./assets/grad_tts.jpg)
+
+![grad_svc](./assets/grad_svc.jpg)
+
+The framework of grad-svc
+
 </div>
 
 ## Features
