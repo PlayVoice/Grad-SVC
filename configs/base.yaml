@@ -4,7 +4,7 @@ train:
   valid_files: "files/valid.txt"
   log_dir: 'logs/grad_svc'
   n_epochs: 10000
-  learning_rate: 1e-5
+  learning_rate: 2e-4
   batch_size: 8
   test_size: 4
   test_step: 1
