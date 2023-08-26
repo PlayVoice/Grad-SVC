@@ -11,18 +11,18 @@ The project will be completed in the coming months ~~~
 
 ![diff_vc](./assets/diff_vc.jpg)
 
-![grad_svc_framwork](./assets/grad_svc_framework.jpg)
+![grad_svc](./assets/grad_svc.jpg)
 
 The framework of grad-svc
 
 </div>
 
 ## Features
-1. Supported multi-speaker based on speaker encoder
+1. Multi-speaker based on speaker encoder
 
-2. No electronic sound
+2. No speaker leaky based on `GRL`
 
-3. No speaker leaky, by pure `GRL`
+3. No electronic sound
 
 ## Setup Environment
 1. Install project dependencies
@@ -112,7 +112,6 @@ data_gvc/
     ```
     python prepare/preprocess_a.py -w ./data_raw -o ./data_gvc/waves-16k -s 16000
     ```
-    
     - Generate audio with a sampling rate of 32000Hz in `./data_gvc/waves-32k`
     ```
     python prepare/preprocess_a.py -w ./data_raw -o ./data_gvc/waves-32k -s 32000
@@ -173,29 +172,32 @@ data_gvc/
    ```
 
 2. Inference
-    - if there is no need to adjust `f0`, just run the following command.
+    - Convert wave to mel
         ```
         python gvc_inference.py --model gvc.pth --spk ./data_gvc/singer/your_singer.spk.npy --wave test.wav --shift 0
         ```
-    - if `f0` will be adjusted manually, follow the steps:
+    - Convert mel to wave
+        ```
+        python gvc_inference_wave.py --mel gvc_out.mel.pt --pit gvc_tmp.pit.csv
+        ```
 
-        1. use hubert to extract content vector
-            ```
-            python hubert/inference.py -w test.wav -v test.vec.npy
-            ```
-        2. extract the F0 parameter to the csv text format
-            ```
-            python pitch/inference.py -w test.wav -p test.csv
-            ```
-        3. final inference
-            ```
-            python gvc_inference.py --model gvc.pth --spk ./data_gvc/singer/your_singer.spk.npy --wave test.wav --vec test.vec.npy --pit test.csv --shift 0
-            ```
-
-3. Convert mel to wave
-    ```
-    python gvc_inference_wave.py --mel gvc_out.mel.pt --pit gvc_tmp.pit.csv
-    ```
+2. Inference step by step
+    - Extract hubert content vector
+        ```
+        python hubert/inference.py -w test.wav -v test.vec.npy
+        ```
+    - Extract pitch to the csv text format
+        ```
+        python pitch/inference.py -w test.wav -p test.csv
+        ```
+    - Convert hubert & pitch to mel
+        ```
+        python gvc_inference.py --model gvc.pth --spk ./data_gvc/singer/your_singer.spk.npy --wave test.wav --vec test.vec.npy --pit test.csv --shift 0
+        ```
+    - Convert mel to wave
+        ```
+        python gvc_inference_wave.py --mel gvc_out.mel.pt --pit test.csv
+        ```
 
 ## Code sources and references
 
