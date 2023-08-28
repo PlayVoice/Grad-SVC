@@ -1,5 +1,5 @@
 <div align="center">
-<h1> Grad-SVC based Grad-TTS from HUAWEI Noah's Ark Lab </h1>
+<h1> Grad-SVC based on Grad-TTS from HUAWEI Noah's Ark Lab </h1>
 
 This project is named as [Grad-SVC](), or [GVC]() for short. Its core technology is diffusion, but so different from other diffusion based SVC models. Codes are adapted from `Grad-TTS` and `so-vits-svc-5.0`. So the features from `so-vits-svc-5.0` will be used in this project. And [Diff-VC](https://github.com/huawei-noah/Speech-Backbones/tree/main/DiffVC) is a follow-up of [Grad-TTS](), [Diffusion-Based Any-to-Any Voice Conversion](https://arxiv.org/abs/2109.13821)
 
