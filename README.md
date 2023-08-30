@@ -15,6 +15,10 @@ The project will be completed in the coming months ~~~
 
 The framework of grad-svc
 
+![CoMoSpeech](./assets/CoMoSpeech.png)
+
+To Be integrated
+
 </div>
 
 ## Features
@@ -208,6 +212,8 @@ https://github.com/huawei-noah/Speech-Backbones/tree/main/DiffVC [paper](https:/
 https://github.com/facebookresearch/speech-resynthesis [paper](https://arxiv.org/abs/2104.00355)
 
 https://github.com/shivammehta25/Diff-TTSG [paper](https://arxiv.org/abs/2306.09417)
+
+https://github.com/zhenye234/CoMoSpeech [paper](https://arxiv.org/abs/2305.06908)
 
 https://github.com/lmnt-com/wavegrad [paper](https://arxiv.org/pdf/2009.00713.pdf)
 
