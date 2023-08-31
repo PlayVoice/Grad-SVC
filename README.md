@@ -41,11 +41,11 @@ To Be integrated
 
 4. Download pretrained [nsf_bigvgan_pretrain_32K.pth](https://github.com/PlayVoice/NSF-BigVGAN/releases/augment), and put it into `bigvgan_pretrain/`.
 
-5. Download pretrain model [gvc.pretrain.pth](), and put it into `grad_pretrain/`.
-    ```shell
-    python gvc_inference.py --config configs/base.yaml --model ./grad_pretrain/gvc.pretrain.pth --spk ./configs/singers/singer0001.npy --wave test.wav
-    ```
-
+5. Download pretrain model [gvc.pretrain.pth](https://github.com/PlayVoice/Grad-SVC/releases/tag/20230829), and put it into `grad_pretrain/`.
+    > python gvc_inference.py --config configs/base.yaml --model ./grad_pretrain/gvc.pretrain.pth --spk ./configs/singers/singer0001.npy --wave test.wav
+    
+    For this pretrain model, `temperature` is set `temperature=1.015` in `gvc_inference.py` to get good result.
+   
 ## Dataset preparation
 Put the dataset into the `data_raw` directory following the structure below.
 ```
@@ -177,9 +177,7 @@ data_gvc/
 
 2. Inference
     - Convert wave to mel
-        ```
-        python gvc_inference.py --model gvc.pth --spk ./data_gvc/singer/your_singer.spk.npy --wave test.wav --shift 0
-        ```
+        > python gvc_inference.py --model gvc.pth --spk ./data_gvc/singer/your_singer.spk.npy --wave test.wav --shift 0
     - Convert mel to wave
         ```
         python gvc_inference_wave.py --mel gvc_out.mel.pt --pit gvc_tmp.pit.csv
@@ -195,9 +193,7 @@ data_gvc/
         python pitch/inference.py -w test.wav -p test.csv
         ```
     - Convert hubert & pitch to mel
-        ```
-        python gvc_inference.py --model gvc.pth --spk ./data_gvc/singer/your_singer.spk.npy --wave test.wav --vec test.vec.npy --pit test.csv --shift 0
-        ```
+        > python gvc_inference.py --model gvc.pth --spk ./data_gvc/singer/your_singer.spk.npy --wave test.wav --vec test.vec.npy --pit test.csv --shift 0
     - Convert mel to wave
         ```
         python gvc_inference_wave.py --mel gvc_out.mel.pt --pit test.csv
