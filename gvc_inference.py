@@ -38,7 +38,7 @@ def gvc_main(device, model, _vec, _pit, spk):
     pit = torch.zeros((1, lengths_fix), dtype=torch.float32).to(device)
     vec[0, :l_vec, :] = _vec
     pit[0, :l_vec] = _pit
-    y_enc, y_dec = model(lengths, vec, pit, spk, n_timesteps=50)
+    y_enc, y_dec = model(lengths, vec, pit, spk, n_timesteps=50, temperature=1.015)
     y_dec = y_dec.squeeze(0)
     y_dec = y_dec[:, :l_vec]
     return y_dec
