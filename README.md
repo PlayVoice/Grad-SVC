@@ -1,15 +1,11 @@
 <div align="center">
 <h1> Grad-SVC based on Grad-TTS from HUAWEI Noah's Ark Lab </h1>
 
-This project is named as [Grad-SVC](), or [GVC]() for short. Its core technology is diffusion, but so different from other diffusion based SVC models. Codes are adapted from `Grad-TTS` and `so-vits-svc-5.0`. So the features from `so-vits-svc-5.0` will be used in this project. And [Diff-VC](https://github.com/huawei-noah/Speech-Backbones/tree/main/DiffVC) is a follow-up of [Grad-TTS](), [Diffusion-Based Any-to-Any Voice Conversion](https://arxiv.org/abs/2109.13821)
-
-The project will be completed in the coming months ~~~
+This project is named as [Grad-SVC](), or [GVC]() for short. Its core technology is diffusion, but so different from other diffusion based SVC models. Codes are adapted from `Grad-TTS` and `so-vits-svc-5.0`. So the features from `so-vits-svc-5.0` are used in this project. By the way, [Diff-VC](https://github.com/huawei-noah/Speech-Backbones/tree/main/DiffVC) is a follow-up of [Grad-TTS](), [Diffusion-Based Any-to-Any Voice Conversion](https://arxiv.org/abs/2109.13821)
 
 [Grad-TTS: A Diffusion Probabilistic Model for Text-to-Speech](https://arxiv.org/abs/2105.06337)
 
 ![grad_tts](./assets/grad_tts.jpg)
-
-![diff_vc](./assets/diff_vc.jpg)
 
 ![grad_svc](./assets/grad_svc.jpg)
 
@@ -22,11 +18,19 @@ To Be integrated
 </div>
 
 ## Features
-1. Multi-speaker based on speaker encoder
+1. Such beautiful codes from Grad-TTS
 
-2. No speaker leaky based on `GRL`
+    `easy to read`
 
-3. No electronic sound
+2. Multi-speaker based on speaker encoder
+
+3. No speaker leaky based on `GRL`
+
+4. No electronic sound
+
+5. Low GPU memery required for trian
+
+    `batch_size: 8, occupy 3.1GB GPU memory when fast epochs, and 5.8G when last epochs`
 
 ## Setup Environment
 1. Install project dependencies
@@ -177,7 +181,9 @@ data_gvc/
 
 2. Inference
     - Convert wave to mel
-        > python gvc_inference.py --model gvc.pth --spk ./data_gvc/singer/your_singer.spk.npy --wave test.wav --shift 0
+        ```
+        python gvc_inference.py --model gvc.pth --spk ./data_gvc/singer/your_singer.spk.npy --wave test.wav --shift 0
+        ```
     - Convert mel to wave
         ```
         python gvc_inference_wave.py --mel gvc_out.mel.pt --pit gvc_tmp.pit.csv
@@ -193,7 +199,9 @@ data_gvc/
         python pitch/inference.py -w test.wav -p test.csv
         ```
     - Convert hubert & pitch to mel
-        > python gvc_inference.py --model gvc.pth --spk ./data_gvc/singer/your_singer.spk.npy --wave test.wav --vec test.vec.npy --pit test.csv --shift 0
+        ```
+        python gvc_inference.py --model gvc.pth --spk ./data_gvc/singer/your_singer.spk.npy --wave test.wav --vec test.vec.npy --pit test.csv --shift 0
+        ```
     - Convert mel to wave
         ```
         python gvc_inference_wave.py --mel gvc_out.mel.pt --pit test.csv
@@ -201,29 +209,29 @@ data_gvc/
 
 ## Code sources and references
 
-https://github.com/huawei-noah/Speech-Backbones/blob/main/Grad-TTS [paper](https://arxiv.org/abs/2105.06337)
+https://github.com/huawei-noah/Speech-Backbones/blob/main/Grad-TTS
 
-https://github.com/huawei-noah/Speech-Backbones/tree/main/DiffVC [paper](https://arxiv.org/abs/2109.13821)
+https://github.com/huawei-noah/Speech-Backbones/tree/main/DiffVC
 
-https://github.com/facebookresearch/speech-resynthesis [paper](https://arxiv.org/abs/2104.00355)
+https://github.com/facebookresearch/speech-resynthesis
 
-https://github.com/shivammehta25/Diff-TTSG [paper](https://arxiv.org/abs/2306.09417)
+https://github.com/shivammehta25/Diff-TTSG
 
-https://github.com/zhenye234/CoMoSpeech [paper](https://arxiv.org/abs/2305.06908)
+https://github.com/zhenye234/CoMoSpeech
 
-https://github.com/lmnt-com/wavegrad [paper](https://arxiv.org/pdf/2009.00713.pdf)
+https://github.com/lmnt-com/wavegrad
 
-https://github.com/jaywalnut310/vits [paper](https://arxiv.org/abs/2106.06103)
+https://github.com/jaywalnut310/vits
 
-https://github.com/mindslab-ai/univnet [paper](https://arxiv.org/abs/2106.07889)
+https://github.com/NVIDIA/BigVGAN
 
-https://github.com/NVIDIA/BigVGAN [paper](https://arxiv.org/abs/2206.04658)
-
-https://github.com/bshall/soft-vc [paper](https://arxiv.org/abs/2111.02392)
+https://github.com/bshall/soft-vc
 
 https://github.com/mozilla/TTS
 
 https://github.com/maxrmorrison/torchcrepe
+
+https://github.com/ubisoft/ubisoft-laforge-daft-exprt
 
 ## QQ Grop
 <div align="center">
