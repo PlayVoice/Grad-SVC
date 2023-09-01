@@ -3,12 +3,13 @@ train:
   train_files: "files/train.txt"
   valid_files: "files/valid.txt"
   log_dir: 'logs/grad_svc'
-  n_epochs: 10000
+  full_epochs: 150
+  fast_epochs: 100
   learning_rate: 2e-4
   batch_size: 8
   test_size: 4
-  test_step: 1
-  save_step: 1
+  test_step: 5
+  save_step: 10
   pretrain: "grad_pretrain/gvc.pretrain.pth"
 #############################
 data: 
