@@ -71,3 +71,7 @@ def save_plot(tensor, savepath):
     plt.savefig(savepath)
     plt.close()
     return
+
+
+def print_error(info):
+    print(f"\033[31m {info} \033[0m")
