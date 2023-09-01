@@ -7,7 +7,7 @@ from torch.utils.tensorboard import SummaryWriter
 
 from tqdm import tqdm
 from grad_extend.data import TextMelSpeakerDataset, TextMelSpeakerBatchCollate
-from grad_extend.utils import plot_tensor, save_plot, load_model
+from grad_extend.utils import plot_tensor, save_plot, load_model, print_error
 from grad.utils import fix_len_compatibility
 from grad.model import GradTTS
 
@@ -45,6 +45,8 @@ def train(hps, chkpt_path=None):
         checkpoint = torch.load(hps.train.pretrain, map_location='cpu')
         load_model(model, checkpoint['model'])
         hps.train.learning_rate = 2e-5
+    else:
+        print_error(10 * '~' + "No Pretrain Model" + 10 * '~')
 
     print('Initializing optimizer...')
     optim = torch.optim.Adam(params=model.parameters(), lr=hps.train.learning_rate)
@@ -71,11 +73,14 @@ def train(hps, chkpt_path=None):
 
     print('Start training...')
     skip_diff_train = True
-    for epoch in range(initepoch, hps.train.n_epochs + 1):
-        model.eval()
-        print('Synthesis...')
+    if initepoch > hps.train.fast_epochs:
+        skip_diff_train = False
+    for epoch in range(initepoch, hps.train.full_epochs + 1):
 
         if epoch % hps.train.test_step == 0:
+            model.eval()
+            print('Synthesis...')
+
             with torch.no_grad():
                 for i, item in enumerate(test_batch):
                     l_vec = item['vec'].shape[0]
@@ -163,9 +168,10 @@ def train(hps, chkpt_path=None):
         msg += '| diffusion loss = %.3f\n' % np.mean(diff_losses)
         with open(f'{hps.train.log_dir}/train.log', 'a') as f:
             f.write(msg)
-        if (np.mean(prior_losses) < 1.05):
+        # if (np.mean(prior_losses) < 1.05):
+        #     skip_diff_train = False
+        if epoch > hps.train.fast_epochs:
             skip_diff_train = False
-
         if epoch % hps.train.save_step > 0:
             continue
 
