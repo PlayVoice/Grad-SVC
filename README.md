@@ -1,5 +1,6 @@
 <div align="center">
-<h1> Grad-SVC based on Grad-TTS from HUAWEI Noah's Ark Lab </h1>
+<h1> Grad-SVC based on Grad-TTS from </h1>
+<h1> HUAWEI Noah's Ark Lab </h1>
 
 This project is named as [Grad-SVC](), or [GVC]() for short. Its core technology is diffusion, but so different from other diffusion based SVC models. Codes are adapted from `Grad-TTS` and `so-vits-svc-5.0`. So the features from `so-vits-svc-5.0` are used in this project. By the way, [Diff-VC](https://github.com/huawei-noah/Speech-Backbones/tree/main/DiffVC) is a follow-up of [Grad-TTS](), [Diffusion-Based Any-to-Any Voice Conversion](https://arxiv.org/abs/2109.13821)
 
@@ -28,7 +29,7 @@ To Be integrated
 
 4. No electronic sound
 
-5. Low GPU memery required for trian
+5. Low GPU memery required for train
 
     `batch_size: 8, occupy 3.1GB GPU memory when fast epochs, and 5.8G when last epochs`
 
@@ -46,7 +47,11 @@ To Be integrated
 4. Download pretrained [nsf_bigvgan_pretrain_32K.pth](https://github.com/PlayVoice/NSF-BigVGAN/releases/augment), and put it into `bigvgan_pretrain/`.
 
 5. Download pretrain model [gvc.pretrain.pth](https://github.com/PlayVoice/Grad-SVC/releases/tag/20230829), and put it into `grad_pretrain/`.
-    > python gvc_inference.py --config configs/base.yaml --model ./grad_pretrain/gvc.pretrain.pth --spk ./configs/singers/singer0001.npy --wave test.wav
+    ```
+    python gvc_inference.py --config configs/base.yaml --model ./grad_pretrain/gvc.pretrain.pth --spk ./configs/singers/singer0001.npy --wave test.wav
+
+    python gvc_inference_wave.py --mel gvc_out.mel.pt --pit gvc_tmp.pit.csv
+    ```
     
     For this pretrain model, `temperature` is set `temperature=1.015` in `gvc_inference.py` to get good result.
    
