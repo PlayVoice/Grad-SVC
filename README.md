@@ -11,9 +11,7 @@ This project is named as [Grad-SVC](), or [GVC]() for short. Its core technology
 
 The framework of grad-svc
 
-![CoMoSpeech](./assets/CoMoSpeech.png)
-
-To Be integrated
+https://github.com/PlayVoice/Grad-SVC/assets/16432329/f9b66af7-b5b5-4efb-b73d-adb0dc84a0ae
 
 </div>
 
