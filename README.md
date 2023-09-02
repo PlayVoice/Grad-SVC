@@ -221,6 +221,8 @@ https://github.com/facebookresearch/speech-resynthesis
 
 https://github.com/shivammehta25/Diff-TTSG
 
+https://github.com/gmltmd789/UnitSpeech
+
 https://github.com/zhenye234/CoMoSpeech
 
 https://github.com/seahore/PPG-GradVC
