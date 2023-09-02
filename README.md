@@ -227,6 +227,8 @@ https://github.com/thuhcsi/LightGrad
 
 https://github.com/lmnt-com/wavegrad
 
+https://github.com/seahore/PPG-GradVC
+
 https://github.com/jaywalnut310/vits
 
 https://github.com/NVIDIA/BigVGAN
