@@ -223,11 +223,13 @@ https://github.com/shivammehta25/Diff-TTSG
 
 https://github.com/zhenye234/CoMoSpeech
 
+https://github.com/seahore/PPG-GradVC
+
 https://github.com/thuhcsi/LightGrad
 
 https://github.com/lmnt-com/wavegrad
 
-https://github.com/seahore/PPG-GradVC
+https://github.com/naver-ai/facetts
 
 https://github.com/jaywalnut310/vits
 
