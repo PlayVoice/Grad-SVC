@@ -8,14 +8,33 @@ from omegaconf import OmegaConf
 from pitch import load_csv_pitch
 from spec.inference import print_mel
 
+from grad_extend.utils import print_error
 from grad.utils import fix_len_compatibility
 from grad.model import GradTTS
+from bigvgan.model.generator import Generator
+from scipy.io.wavfile import write
 
 
 def load_gvc_model(checkpoint_path, model):
     assert os.path.isfile(checkpoint_path)
     checkpoint_dict = torch.load(checkpoint_path, map_location="cpu")
     saved_state_dict = checkpoint_dict["model"]
+    state_dict = model.state_dict()
+    new_state_dict = {}
+    for k, v in state_dict.items():
+        try:
+            new_state_dict[k] = saved_state_dict[k]
+        except:
+            print("%s is not in the checkpoint" % k)
+            new_state_dict[k] = v
+    model.load_state_dict(new_state_dict)
+    return model
+
+
+def load_bigv_model(checkpoint_path, model):
+    assert os.path.isfile(checkpoint_path)
+    checkpoint_dict = torch.load(checkpoint_path, map_location="cpu")
+    saved_state_dict = checkpoint_dict["model_g"]
     state_dict = model.state_dict()
     new_state_dict = {}
     for k, v in state_dict.items():
@@ -97,7 +116,7 @@ def main(args):
         hop_frame = 8
         out_chunk = 2400  # 24 S
         out_index = 0
-        out_mel = None
+        mel = None
 
         while (out_index < all_frame):
             if (out_index == 0):  # start frame
@@ -121,15 +140,47 @@ def main(args):
             sub_out = sub_out[:, cut_s_out:cut_e_out]
  
             out_index = out_index + out_chunk
-            if out_mel == None:
-                out_mel = sub_out
+            if mel == None:
+                mel = sub_out
             else:
-                out_mel = torch.cat((out_mel, sub_out), -1)
+                mel = torch.cat((mel, sub_out), -1)
             if cut_e == all_frame:
                 break
+    
+    print_error(10 * '~' + "mel has been generated" + 10 * '~')
+    print_mel(mel, "gvc_out.mel.png")
+    del model
+    del hps
+    del spk
+    del vec
+    del sub_vec
+    del sub_pit
+    del sub_out
 
-    torch.save(out_mel, "gvc_out.mel.pt")
-    print_mel(out_mel, "gvc_out.mel.png")
+    hps = OmegaConf.load(args.config_bigv)
+    model = Generator(hps)
+    load_bigv_model(args.model_bigv, model)
+    model.eval()
+    model.to(device)
+
+    len_pit = pit.size()[0]
+    len_mel = mel.size()[1]
+    len_min = min(len_pit, len_mel)
+    pit = pit[:len_min]
+    mel = mel[:, :len_min]
+
+    with torch.no_grad():
+        mel = mel.unsqueeze(0).to(device)
+        pit = pit.unsqueeze(0).to(device)
+        audio = model.inference(mel, pit)
+        audio = audio.cpu().detach().numpy()
+
+        pitwav = model.pitch2wav(pit)
+        pitwav = pitwav.cpu().detach().numpy()
+
+    print_error(10 * '~' + "wav has been generated" + 10 * '~')
+    write("gvc_out.wav", hps.audio.sampling_rate, audio)
+    write("gvc_pitch.wav", hps.audio.sampling_rate, pitwav)
 
 
 if __name__ == '__main__':
@@ -149,5 +200,14 @@ if __name__ == '__main__':
     parser.add_argument('--shift', type=int, default=0,
                         help="Pitch shift key.")
     args = parser.parse_args()
+
+    args.config_bigv = "./bigvgan/configs/nsf_bigvgan.yaml"
+    args.model_bigv = "./bigvgan_pretrain/nsf_bigvgan_pretrain_32K.pth"
+
+    assert os.path.isfile(args.config)
+    assert os.path.isfile(args.model)
+
+    assert os.path.isfile(args.config_bigv)
+    assert os.path.isfile(args.model_bigv)
 
     main(args)
