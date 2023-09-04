@@ -48,7 +48,7 @@ def load_bigv_model(checkpoint_path, model):
 
 
 @torch.no_grad()
-def gvc_main(device, model, _vec, _pit, spk):
+def gvc_main(device, model, _vec, _pit, spk, rature=1.015):
     l_vec = _vec.shape[0]
     d_vec = _vec.shape[1]
     lengths_fix = fix_len_compatibility(l_vec)
@@ -57,7 +57,7 @@ def gvc_main(device, model, _vec, _pit, spk):
     pit = torch.zeros((1, lengths_fix), dtype=torch.float32).to(device)
     vec[0, :l_vec, :] = _vec
     pit[0, :l_vec] = _pit
-    y_enc, y_dec = model(lengths, vec, pit, spk, n_timesteps=50, temperature=1.015)
+    y_enc, y_dec = model(lengths, vec, pit, spk, n_timesteps=50, temperature=rature)
     y_dec = y_dec.squeeze(0)
     y_dec = y_dec[:, :l_vec]
     return y_dec
@@ -86,6 +86,7 @@ def main(args):
                     hps.grad.dec_dim, hps.grad.beta_min, hps.grad.beta_max, hps.grad.pe_scale)
     print('Number of encoder parameters = %.2fm' % (model.encoder.nparams/1e6))
     print('Number of decoder parameters = %.2fm' % (model.decoder.nparams/1e6))
+    print_error(f'Temperature: {args.rature}')
 
     load_gvc_model(args.model, model)
     model.eval()
@@ -136,7 +137,7 @@ def main(args):
             sub_vec = vec[cut_s:cut_e, :].to(device)
             sub_pit = pit[cut_s:cut_e].to(device)
 
-            sub_out = gvc_main(device, model, sub_vec, sub_pit, spk)
+            sub_out = gvc_main(device, model, sub_vec, sub_pit, spk, args.rature)
             sub_out = sub_out[:, cut_s_out:cut_e_out]
  
             out_index = out_index + out_chunk
@@ -199,6 +200,9 @@ if __name__ == '__main__':
                         help="Path of pitch csv file.")
     parser.add_argument('--shift', type=int, default=0,
                         help="Pitch shift key.")
+    parser.add_argument('--rature', type=float, default=1.015,
+                        help="Pitch shift key.")
+
     args = parser.parse_args()
 
     args.config_bigv = "./bigvgan/configs/nsf_bigvgan.yaml"
