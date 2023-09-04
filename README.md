@@ -184,14 +184,10 @@ data_gvc/
    ```
 
 2. Inference
-    - Convert wave to mel
-        ```
-        python gvc_inference.py --model gvc.pth --spk ./data_gvc/singer/your_singer.spk.npy --wave test.wav --shift 0
-        ```
-    - Convert mel to wave
-        ```
-        python gvc_inference_wave.py --mel gvc_out.mel.pt --pit gvc_tmp.pit.csv
-        ```
+    ```
+    python gvc_inference.py --model gvc.pth --spk ./data_gvc/singer/your_singer.spk.npy --wave test.wav --rature 1.015 --shift 0
+    ```
+    temperature=1.015, needs to be adjusted to get good results; Recommended range is (1.001, 1.035).
 
 2. Inference step by step
     - Extract hubert content vector
@@ -206,10 +202,16 @@ data_gvc/
         ```
         python gvc_inference.py --model gvc.pth --spk ./data_gvc/singer/your_singer.spk.npy --wave test.wav --vec test.vec.npy --pit test.csv --shift 0
         ```
-    - Convert mel to wave
-        ```
-        python gvc_inference_wave.py --mel gvc_out.mel.pt --pit test.csv
-        ```
+
+## Data
+
+| Name | URL |
+| :--- | :--- |
+|PopCS          |https://github.com/MoonInTheRiver/DiffSinger/blob/master/resources/apply_form.md|
+|opencpop       |https://wenet.org.cn/opencpop/download/|
+|Multi-Singer   |https://github.com/Multi-Singer/Multi-Singer.github.io|
+|M4Singer       |https://github.com/M4Singer/M4Singer/blob/master/apply_form.md|
+|VCTK           |https://datashare.ed.ac.uk/handle/10283/2651|
 
 ## Code sources and references
 
@@ -240,8 +242,6 @@ https://github.com/NVIDIA/BigVGAN
 https://github.com/bshall/soft-vc
 
 https://github.com/mozilla/TTS
-
-https://github.com/maxrmorrison/torchcrepe
 
 https://github.com/ubisoft/ubisoft-laforge-daft-exprt
 
