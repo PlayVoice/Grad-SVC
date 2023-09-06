@@ -178,7 +178,7 @@ data_gvc/
 
 1. Export inference model
    ```
-   python gvc_export.py --checkpoint_path logs/grad_svc/grad_svc_***.pt
+   python gvc_export.py --checkpoint_path logs/grad_svc/grad_svc_***.pth
    ```
 
 2. Inference
