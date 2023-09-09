@@ -243,6 +243,12 @@ https://github.com/mozilla/TTS
 
 https://github.com/ubisoft/ubisoft-laforge-daft-exprt
 
+##
+
+https://github.com/yl4579/StyleTTS-VC
+
+https://github.com/MingjieChen/DYGANVC
+
 ## QQ Grop
 <div align="center">
 
