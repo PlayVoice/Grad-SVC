@@ -26,7 +26,9 @@ https://github.com/PlayVoice/Grad-SVC/assets/16432329/f9b66af7-b5b5-4efb-b73d-ad
 
 4. No electronic sound
 
-5. Low GPU memery required for train
+5. Integrated DPM Solver-k for less steps
+
+6. Low GPU memery required for train
 
     `batch_size: 8, occupy 3.1GB GPU memory when fast epochs, and 5.8G when last epochs`
 
