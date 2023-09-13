@@ -26,7 +26,7 @@ https://github.com/PlayVoice/Grad-SVC/assets/16432329/f9b66af7-b5b5-4efb-b73d-ad
 
 4. No electronic sound
 
-5. Integrated DPM Solver-k for less steps
+5. Integrated [DPM Solver-k](https://github.com/LuChengTHU/dpm-solver) for less steps
 
 6. Low GPU memery required for train
 
@@ -222,6 +222,8 @@ https://github.com/huawei-noah/Speech-Backbones/tree/main/DiffVC
 https://github.com/facebookresearch/speech-resynthesis
 
 https://github.com/shivammehta25/Diff-TTSG
+
+https://github.com/LuChengTHU/dpm-solver
 
 https://github.com/gmltmd789/UnitSpeech
 
