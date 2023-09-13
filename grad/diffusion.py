@@ -2,6 +2,7 @@ import math
 import torch
 from einops import rearrange
 from grad.base import BaseModule
+from grad.solver import NoiseScheduleVP
 
 
 class Mish(BaseModule):
@@ -216,6 +217,7 @@ class Diffusion(BaseModule):
         self.n_mels = n_mels
         self.beta_min = beta_min
         self.beta_max = beta_max
+        self.solver = NoiseScheduleVP()
         self.estimator = GradLogPEstimator2d(dim,
                                              n_mels=n_mels,
                                              emb_dim=emb_dim,
@@ -232,7 +234,7 @@ class Diffusion(BaseModule):
         return xt * mask, z * mask
 
     @torch.no_grad()
-    def reverse_diffusion(self, spk, z, mask, mu, n_timesteps, stoc=False):
+    def reverse_diffusion_raw(self, spk, z, mask, mu, n_timesteps, stoc=False):
         h = 1.0 / n_timesteps
         xt = z * mask
         for i in range(n_timesteps):
@@ -255,8 +257,38 @@ class Diffusion(BaseModule):
         return xt
 
     @torch.no_grad()
+    def reverse_diffusion_dpm(self, spk, z, mask, mu, n_timesteps, stoc):
+        ns = self.solver
+        xt = z * mask
+        yt = xt - mu
+        T = 1
+        eps = 1e-3
+        time = ns.get_time_steps(T, eps, n_timesteps)
+        for i in range(n_timesteps):
+            s = torch.ones((xt.shape[0], )).to(xt.device) * time[i]
+            t = torch.ones((xt.shape[0], )).to(xt.device) * time[i + 1]
+
+            lambda_s = ns.marginal_lambda(s)
+            lambda_t = ns.marginal_lambda(t)
+            h = lambda_t - lambda_s
+
+            log_alpha_s = ns.marginal_log_mean_coeff(s)
+            log_alpha_t = ns.marginal_log_mean_coeff(t)
+
+            sigma_t = ns.marginal_std(t)
+            phi_1 = torch.expm1(h)
+
+            noise_s = self.estimator(spk, yt + mu, mask, mu, s)
+            lt = 1 - torch.exp(
+                -get_noise(s, self.beta_min, self.beta_max, cumulative=True))
+            a = torch.exp(log_alpha_t - log_alpha_s)
+            b = sigma_t * phi_1 * torch.sqrt(lt)
+            yt = a * yt + (b * noise_s)
+        xt = yt + mu
+        return xt
+
     def forward(self, spk, z, mask, mu, n_timesteps, stoc=False):
-        return self.reverse_diffusion(spk, z, mask, mu, n_timesteps, stoc)
+        return self.reverse_diffusion_dpm(spk, z, mask, mu, n_timesteps, stoc)
 
     def loss_t(self, spk, mel, mask, mu, t):
         xt, z = self.forward_diffusion(mel, mask, mu, t)
