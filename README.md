@@ -252,10 +252,3 @@ https://github.com/ubisoft/ubisoft-laforge-daft-exprt
 https://github.com/yl4579/StyleTTS-VC
 
 https://github.com/MingjieChen/DYGANVC
-
-## QQ Grop
-<div align="center">
-
-![X·SING-QQ](https://github.com/PlayVoice/so-vits-svc-5.0/assets/16432329/dfbb4740-447e-40f0-9193-c974c4b6ceb0)
-
-</div>
