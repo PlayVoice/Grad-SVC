@@ -2,7 +2,7 @@ import math
 import torch
 from einops import rearrange
 from grad.base import BaseModule
-from grad.solver import NoiseScheduleVP
+from grad.solver import NoiseScheduleVP, MaxLikelihood, GradRaw
 
 
 class Mish(BaseModule):
@@ -163,7 +163,7 @@ class GradLogPEstimator2d(BaseModule):
 
     def forward(self, spk, x, mask, mu, t):
         s = self.spk_mlp(spk)
-        
+
         t = self.time_pos_emb(t, scale=self.pe_scale)
         t = self.mlp(t)
 
@@ -217,7 +217,9 @@ class Diffusion(BaseModule):
         self.n_mels = n_mels
         self.beta_min = beta_min
         self.beta_max = beta_max
-        self.solver = NoiseScheduleVP()
+        # self.solver = NoiseScheduleVP()
+        self.solver = MaxLikelihood()
+        # self.solver = GradRaw()
         self.estimator = GradLogPEstimator2d(dim,
                                              n_mels=n_mels,
                                              emb_dim=emb_dim,
@@ -233,62 +235,8 @@ class Diffusion(BaseModule):
         xt = mean + z * torch.sqrt(variance)
         return xt * mask, z * mask
 
-    @torch.no_grad()
-    def reverse_diffusion_raw(self, spk, z, mask, mu, n_timesteps, stoc=False):
-        h = 1.0 / n_timesteps
-        xt = z * mask
-        for i in range(n_timesteps):
-            t = (1.0 - (i + 0.5)*h) * torch.ones(z.shape[0], dtype=z.dtype, 
-                                                 device=z.device)
-            time = t.unsqueeze(-1).unsqueeze(-1)
-            noise_t = get_noise(time, self.beta_min, self.beta_max, 
-                                cumulative=False)
-            if stoc:  # adds stochastic term
-                dxt_det = 0.5 * (mu - xt) - self.estimator(spk, xt, mask, mu, t)
-                dxt_det = dxt_det * noise_t * h
-                dxt_stoc = torch.randn(z.shape, dtype=z.dtype, device=z.device,
-                                       requires_grad=False)
-                dxt_stoc = dxt_stoc * torch.sqrt(noise_t * h)
-                dxt = dxt_det + dxt_stoc
-            else:
-                dxt = 0.5 * (mu - xt - self.estimator(spk, xt, mask, mu, t))
-                dxt = dxt * noise_t * h
-            xt = (xt - dxt) * mask
-        return xt
-
-    @torch.no_grad()
-    def reverse_diffusion_dpm(self, spk, z, mask, mu, n_timesteps, stoc):
-        ns = self.solver
-        xt = z * mask
-        yt = xt - mu
-        T = 1
-        eps = 1e-3
-        time = ns.get_time_steps(T, eps, n_timesteps)
-        for i in range(n_timesteps):
-            s = torch.ones((xt.shape[0], )).to(xt.device) * time[i]
-            t = torch.ones((xt.shape[0], )).to(xt.device) * time[i + 1]
-
-            lambda_s = ns.marginal_lambda(s)
-            lambda_t = ns.marginal_lambda(t)
-            h = lambda_t - lambda_s
-
-            log_alpha_s = ns.marginal_log_mean_coeff(s)
-            log_alpha_t = ns.marginal_log_mean_coeff(t)
-
-            sigma_t = ns.marginal_std(t)
-            phi_1 = torch.expm1(h)
-
-            noise_s = self.estimator(spk, yt + mu, mask, mu, s)
-            lt = 1 - torch.exp(
-                -get_noise(s, self.beta_min, self.beta_max, cumulative=True))
-            a = torch.exp(log_alpha_t - log_alpha_s)
-            b = sigma_t * phi_1 * torch.sqrt(lt)
-            yt = a * yt + (b * noise_s)
-        xt = yt + mu
-        return xt
-
     def forward(self, spk, z, mask, mu, n_timesteps, stoc=False):
-        return self.reverse_diffusion_dpm(spk, z, mask, mu, n_timesteps, stoc)
+        return self.solver.reverse_diffusion(self.estimator, spk, z, mask, mu, n_timesteps, stoc)
 
     def loss_t(self, spk, mel, mask, mu, t):
         xt, z = self.forward_diffusion(mel, mask, mu, t)
