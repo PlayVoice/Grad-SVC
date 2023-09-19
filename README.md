@@ -9,7 +9,11 @@ This project is named as [Grad-SVC](), or [GVC]() for short. Its core technology
 
 ![grad_svc](./assets/grad_svc.jpg)
 
-The framework of grad-svc
+The framework of grad-svc-v1
+
+![grad_svc_v2](./assets/grad_svc_v2.jpg)
+
+The framework of grad-svc-v2, encoder:768->512, diffusion:64->96, next ver for whisper
 
 https://github.com/PlayVoice/Grad-SVC/assets/16432329/f9b66af7-b5b5-4efb-b73d-adb0dc84a0ae
 
@@ -22,7 +26,7 @@ https://github.com/PlayVoice/Grad-SVC/assets/16432329/f9b66af7-b5b5-4efb-b73d-ad
 
 2. Multi-speaker based on speaker encoder
 
-3. No speaker leaky based on `GRL`
+3. No speaker leaky based on `Perturbation` & `Instance Normlize` & `GRL`
 
 4. No electronic sound
 
