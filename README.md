@@ -258,3 +258,5 @@ https://github.com/ubisoft/ubisoft-laforge-daft-exprt
 https://github.com/yl4579/StyleTTS-VC
 
 https://github.com/MingjieChen/DYGANVC
+
+https://github.com/sony/ai-research-code/tree/master/nvcnet
