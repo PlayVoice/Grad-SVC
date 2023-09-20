@@ -38,6 +38,13 @@ class GradTTS(BaseModule):
                                    filter_channels)
         self.decoder = Diffusion(n_mels, dec_dim, n_embs, beta_min, beta_max, pe_scale)
 
+    def fine_tune(self):
+        for p in self.pit_emb.parameters():
+            p.requires_grad = False
+        for p in self.spk_emb.parameters():
+            p.requires_grad = False
+        self.encoder.fine_tune()
+
     @torch.no_grad()
     def forward(self, lengths, vec, pit, spk, n_timesteps, temperature=1.0, stoc=False):
         """
@@ -76,7 +83,7 @@ class GradTTS(BaseModule):
         z = mu_x + torch.randn_like(mu_x, device=mu_x.device) / temperature
         # Generate sample by performing reverse dynamics
         decoder_outputs = self.decoder(spk, z, mask_x, mu_x, n_timesteps, stoc)
-
+        encoder_outputs = encoder_outputs + torch.randn_like(encoder_outputs)
         return encoder_outputs, decoder_outputs
 
     def compute_loss(self, lengths, vec, pit, spk, mel, out_size, skip_diff=False):
@@ -122,10 +129,10 @@ class GradTTS(BaseModule):
                                .to(spk.device).fill_(1.0))
 
         # Compute loss of score-based decoder
-        if skip_diff:  # 4.00 it/s
+        if skip_diff:
             diff_loss = prior_loss.clone()
             diff_loss.fill_(0)
-        else:  # 1.66 it/s
+        else:
             # Cut a small segment of mel-spectrogram in order to increase batch size
             if not isinstance(out_size, type(None)):
                 ids = rand_ids_segments(lengths, out_size)
@@ -133,6 +140,7 @@ class GradTTS(BaseModule):
 
                 mask_y = slice_segments(mask_x, ids, out_size)
                 mu_y = slice_segments(mu_x, ids, out_size)
+                mu_y = mu_y + torch.randn_like(mu_y)
 
             diff_loss, xt = self.decoder.compute_loss(
                 spk_64, mel, mask_y, mu_y)
