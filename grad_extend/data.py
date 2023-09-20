@@ -56,6 +56,8 @@ class TextMelSpeakerDataset(torch.utils.data.Dataset):
         pit = torch.FloatTensor(pit)
         spk = torch.FloatTensor(spk)
 
+        vec = vec + torch.randn_like(vec)  # Perturbation
+
         len_vec = vec.size()[0] - 2 # for safe
         len_pit = pit.size()[0]
         len_min = min(len_pit, len_vec)
