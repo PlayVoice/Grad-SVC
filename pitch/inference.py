@@ -33,7 +33,6 @@ def compute_f0_crepe(filename):
     hop_length = 320
     fmin = 50
     fmax = 1000
-    fmax = 1000
     model = "full"
     batch_size = 512
     pitch = torchcrepe.predict(
