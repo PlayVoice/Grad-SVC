@@ -13,7 +13,7 @@ The framework of grad-svc-v1
 
 ![grad_svc_v2](./assets/grad_svc_v2.jpg)
 
-The framework of grad-svc-v2, encoder:768->512, diffusion:64->96, next ver for whisper
+The framework of grad-svc-v2, encoder:768->512, diffusion:64->96
 
 https://github.com/PlayVoice/Grad-SVC/assets/16432329/f9b66af7-b5b5-4efb-b73d-adb0dc84a0ae
 
@@ -33,10 +33,6 @@ https://github.com/PlayVoice/Grad-SVC/assets/16432329/f9b66af7-b5b5-4efb-b73d-ad
 5. Integrated [DPM Solver-k](https://github.com/LuChengTHU/dpm-solver) for less steps
 
 6. Integrated Fast Maximum Likelihood Sampling Scheme 
-
-7. Low GPU memery required for train
-
-    `batch_size: 8, occupy 3.1GB GPU memory when fast epochs, and 5.8G when last epochs`
 
 ## Setup Environment
 1. Install project dependencies
@@ -175,9 +171,9 @@ data_gvc/
    tensorboard --logdir logs/
    ```
 
-## Finetune Loss
+## Train Loss
 
-![grad_svc_loss](./assets/grad_svc_loss_fit.jpg)
+![loss_96_v2](./assets/loss_96_v2.jpg)
 
 ![grad_svc_mel](./assets/grad_svc_mel.jpg)
 
