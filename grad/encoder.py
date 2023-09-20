@@ -29,7 +29,7 @@ class LayerNorm(BaseModule):
 
 class ConvReluNorm(BaseModule):
     def __init__(self, in_channels, hidden_channels, out_channels, kernel_size, 
-                 n_layers, p_dropout):
+                 n_layers, p_dropout, eps=1e-5):
         super(ConvReluNorm, self).__init__()
         self.in_channels = in_channels
         self.hidden_channels = hidden_channels
@@ -37,32 +37,43 @@ class ConvReluNorm(BaseModule):
         self.kernel_size = kernel_size
         self.n_layers = n_layers
         self.p_dropout = p_dropout
+        self.eps = eps
 
-        self.conv_pre = torch.nn.Conv1d(in_channels, hidden_channels,
-                                        kernel_size, padding=kernel_size//2)
         self.conv_layers = torch.nn.ModuleList()
-        self.norm_layers = torch.nn.ModuleList()
-        self.conv_layers.append(torch.nn.Conv1d(hidden_channels, hidden_channels, 
+        self.conv_layers.append(torch.nn.Conv1d(in_channels, hidden_channels, 
                                                 kernel_size, padding=kernel_size//2))
-        self.norm_layers.append(LayerNorm(hidden_channels))
         self.relu_drop = torch.nn.Sequential(torch.nn.ReLU(), torch.nn.Dropout(p_dropout))
         for _ in range(n_layers - 1):
             self.conv_layers.append(torch.nn.Conv1d(hidden_channels, hidden_channels, 
                                                     kernel_size, padding=kernel_size//2))
-            self.norm_layers.append(LayerNorm(hidden_channels))
         self.proj = torch.nn.Conv1d(hidden_channels, out_channels, 1)
         self.proj.weight.data.zero_()
         self.proj.bias.data.zero_()
 
     def forward(self, x, x_mask):
-        x = self.conv_pre(x)
-        x_org = x
         for i in range(self.n_layers):
             x = self.conv_layers[i](x * x_mask)
-            x = self.norm_layers[i](x)
+            x = self.instance_norm(x, x_mask)
             x = self.relu_drop(x)
-        x = x_org + self.proj(x)
+        x = self.proj(x)
         return x * x_mask
+
+    def instance_norm(self, x, mask, return_mean_std=False):
+        mean, std = self.calc_mean_std(x, mask)
+        x = (x - mean) / std
+        if return_mean_std:
+            return x, mean, std
+        else:
+            return x
+
+    def calc_mean_std(self, x, mask=None):
+        x = x * mask
+        B, C = x.shape[:2]
+        mn = x.view(B, C, -1).mean(-1)
+        sd = (x.view(B, C, -1).var(-1) + self.eps).sqrt()
+        mn = mn.view(B, C, *((len(x.shape) - 2) * [1]))
+        sd = sd.view(B, C, *((len(x.shape) - 2) * [1]))
+        return mn, sd
 
 
 class MultiHeadAttention(BaseModule):
@@ -275,7 +286,7 @@ class TextEncoder(BaseModule):
                                    n_channels,
                                    n_channels,
                                    kernel_size=5,
-                                   n_layers=3,
+                                   n_layers=5,
                                    p_dropout=0.5)
 
         self.speaker = SpeakerClassifier(
@@ -295,7 +306,7 @@ class TextEncoder(BaseModule):
 
     def forward(self, x_lengths, x, pit, spk, training=False):
         x_mask = torch.unsqueeze(sequence_mask(x_lengths, x.size(2)), 1).to(x.dtype)
-        # despeaker
+        # IN
         x = self.prenet(x, x_mask)
         if training:
             r = self.speaker(x)
@@ -308,3 +319,9 @@ class TextEncoder(BaseModule):
         x = self.encoder(x, x_mask)
         mu = self.proj_m(x) * x_mask
         return mu, x_mask, r
+
+    def fine_tune(self):
+        for p in self.prenet.parameters():
+            p.requires_grad = False
+        for p in self.speaker.parameters():
+            p.requires_grad = False
