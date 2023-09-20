@@ -45,6 +45,8 @@ def train(hps, chkpt_path=None):
         checkpoint = torch.load(hps.train.pretrain, map_location='cpu')
         load_model(model, checkpoint['model'])
         hps.train.learning_rate = 2e-5
+        # fine_tune
+        model.fine_tune()
     else:
         print_error(10 * '~' + "No Pretrain Model" + 10 * '~')
 
@@ -73,7 +75,7 @@ def train(hps, chkpt_path=None):
 
     print('Start training...')
     skip_diff_train = True
-    if initepoch > hps.train.fast_epochs:
+    if initepoch >= hps.train.fast_epochs:
         skip_diff_train = False
     for epoch in range(initepoch, hps.train.full_epochs + 1):
 
