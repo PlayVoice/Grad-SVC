@@ -35,7 +35,7 @@ grad:
   filter_channels: 512
 
   # decoder parameters
-  dec_dim: 96
+  dec_dim: 64
   beta_min: 0.05
   beta_max: 20.0
   pe_scale: 1000
