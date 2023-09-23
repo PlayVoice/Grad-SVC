@@ -13,7 +13,7 @@ The framework of grad-svc-v1
 
 ![grad_svc_v2](./assets/grad_svc_v2.jpg)
 
-The framework of grad-svc-v2-64, encoder:768->512, diffusion:64
+The framework of grad-svc-v2 & grad-svc-v3 (conditional flow matching)
 
 https://github.com/PlayVoice/Grad-SVC/assets/16432329/f9b66af7-b5b5-4efb-b73d-adb0dc84a0ae
 
@@ -30,13 +30,15 @@ https://github.com/PlayVoice/Grad-SVC/assets/16432329/f9b66af7-b5b5-4efb-b73d-ad
 
 4. No electronic sound
 
-5. Integrated [DPM Solver-k](https://github.com/LuChengTHU/dpm-solver) for less steps
+5. Integrated [DPM Solver-k](https://github.com/LuChengTHU/dpm-solver) for less steps (2)
 
-6. Integrated Fast Maximum Likelihood Sampling Scheme 
+6. Integrated Fast Maximum Likelihood Sampling Scheme (V2)
 
-7. Low GPU memery required for train
+7. Conditional Flow Matching (V3)
 
-    `6.2GB for batch_size=8`
+8. Low GPU memery required for train
+
+    `V2: 6.2GB for batch_size=8`
 
 ## Setup Environment
 1. Install project dependencies
@@ -230,6 +232,8 @@ https://github.com/huawei-noah/Speech-Backbones/blob/main/Grad-TTS
 https://github.com/huawei-noah/Speech-Backbones/tree/main/DiffVC
 
 https://github.com/facebookresearch/speech-resynthesis
+
+https://github.com/shivammehta25/Matcha-TTS
 
 https://github.com/shivammehta25/Diff-TTSG
 
