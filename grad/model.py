@@ -4,7 +4,7 @@ import torch
 from grad.ssim import SSIM
 from grad.base import BaseModule
 from grad.encoder import TextEncoder
-from grad.diffusion import Diffusion
+from grad.matcha import FlowMatch
 from grad.utils import f0_to_coarse, rand_ids_segments, slice_segments
 
 SpeakerLoss = torch.nn.CosineEmbeddingLoss()
@@ -36,7 +36,7 @@ class GradTTS(BaseModule):
                                    n_embs,
                                    n_enc_channels,
                                    filter_channels)
-        self.decoder = Diffusion(n_mels, dec_dim, n_embs, beta_min, beta_max, pe_scale)
+        self.decoder = FlowMatch(n_mels, dec_dim, n_embs, pe_scale)
 
     def fine_tune(self):
         for p in self.pit_emb.parameters():
@@ -46,7 +46,7 @@ class GradTTS(BaseModule):
         self.encoder.fine_tune()
 
     @torch.no_grad()
-    def forward(self, lengths, vec, pit, spk, n_timesteps, temperature=1.0, stoc=False):
+    def forward(self, lengths, vec, pit, spk, n_timesteps, temperature=1.0):
         """
         Generates mel-spectrogram from vec. Returns:
             1. encoder outputs
@@ -60,8 +60,6 @@ class GradTTS(BaseModule):
             
             n_timesteps (int): number of steps to use for reverse diffusion in decoder.
             temperature (float, optional): controls variance of terminal distribution.
-            stoc (bool, optional): flag that adds stochastic term to the decoder sampler.
-                Usually, does not provide synthesis improvements.
         """
         lengths, vec, pit, spk = self.relocate_input([lengths, vec, pit, spk])
 
@@ -79,11 +77,9 @@ class GradTTS(BaseModule):
         mu_x, mask_x, _ = self.encoder(lengths, vec, pit, spk)
         encoder_outputs = mu_x
 
-        # Sample latent representation from terminal distribution N(mu_y, I)
-        z = mu_x + torch.randn_like(mu_x, device=mu_x.device) / temperature
         # Generate sample by performing reverse dynamics
-        decoder_outputs = self.decoder(spk, z, mask_x, mu_x, n_timesteps, stoc)
-        encoder_outputs = encoder_outputs + torch.randn_like(encoder_outputs)
+        decoder_outputs = self.decoder(spk, mu_x, mask_x, n_timesteps, temperature)
+        encoder_outputs = encoder_outputs + torch.randn_like(encoder_outputs) * 0.1
         return encoder_outputs, decoder_outputs
 
     def compute_loss(self, lengths, vec, pit, spk, mel, out_size, skip_diff=False):
