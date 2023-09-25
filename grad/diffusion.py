@@ -1,8 +1,8 @@
 import math
 import torch
+
 from einops import rearrange
 from grad.base import BaseModule
-from grad.solver import NoiseScheduleVP, MaxLikelihood, GradRaw
 
 
 class Mish(BaseModule):
@@ -108,6 +108,8 @@ class SinusoidalPosEmb(BaseModule):
         self.dim = dim
 
     def forward(self, x, scale=1000):
+        if x.ndim < 1:
+            x = x.unsqueeze(0)
         device = x.device
         half_dim = self.dim // 2
         emb = math.log(10000) / (half_dim - 1)
@@ -200,54 +202,3 @@ class GradLogPEstimator2d(BaseModule):
         output = self.final_conv(x * mask)
 
         return (output * mask).squeeze(1)
-
-
-def get_noise(t, beta_init, beta_term, cumulative=False):
-    if cumulative:
-        noise = beta_init*t + 0.5*(beta_term - beta_init)*(t**2)
-    else:
-        noise = beta_init + (beta_term - beta_init)*t
-    return noise
-
-
-class Diffusion(BaseModule):
-    def __init__(self, n_mels, dim, emb_dim=64,
-                 beta_min=0.05, beta_max=20, pe_scale=1000):
-        super(Diffusion, self).__init__()
-        self.n_mels = n_mels
-        self.beta_min = beta_min
-        self.beta_max = beta_max
-        # self.solver = NoiseScheduleVP()
-        self.solver = MaxLikelihood()
-        # self.solver = GradRaw()
-        self.estimator = GradLogPEstimator2d(dim,
-                                             n_mels=n_mels,
-                                             emb_dim=emb_dim,
-                                             pe_scale=pe_scale)
-
-    def forward_diffusion(self, mel, mask, mu, t):
-        time = t.unsqueeze(-1).unsqueeze(-1)
-        cum_noise = get_noise(time, self.beta_min, self.beta_max, cumulative=True)
-        mean = mel*torch.exp(-0.5*cum_noise) + mu*(1.0 - torch.exp(-0.5*cum_noise))
-        variance = 1.0 - torch.exp(-cum_noise)
-        z = torch.randn(mel.shape, dtype=mel.dtype, device=mel.device, 
-                        requires_grad=False)
-        xt = mean + z * torch.sqrt(variance)
-        return xt * mask, z * mask
-
-    def forward(self, spk, z, mask, mu, n_timesteps, stoc=False):
-        return self.solver.reverse_diffusion(self.estimator, spk, z, mask, mu, n_timesteps, stoc)
-
-    def loss_t(self, spk, mel, mask, mu, t):
-        xt, z = self.forward_diffusion(mel, mask, mu, t)
-        time = t.unsqueeze(-1).unsqueeze(-1)
-        cum_noise = get_noise(time, self.beta_min, self.beta_max, cumulative=True)
-        noise_estimation = self.estimator(spk, xt, mask, mu, t)
-        noise_estimation *= torch.sqrt(1.0 - torch.exp(-cum_noise))
-        loss = torch.sum((noise_estimation + z)**2) / (torch.sum(mask)*self.n_mels)
-        return loss, xt
-
-    def compute_loss(self, spk, mel, mask, mu, offset=1e-5):
-        t = torch.rand(mel.shape[0], dtype=mel.dtype, device=mel.device, requires_grad=False)
-        t = torch.clamp(t, offset, 1.0 - offset)
-        return self.loss_t(spk, mel, mask, mu, t)
