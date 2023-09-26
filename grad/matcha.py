@@ -97,7 +97,7 @@ class FlowMatch(BaseModule):
         y = (1 - (1 - self.sigma_min) * t) * z + t * x1
         u = x1 - (1 - self.sigma_min) * z
 
-        loss = F.mse_loss(self.estimator(y, mask, mu, t.squeeze(), spks), u, reduction="sum") / (
+        loss = F.mse_loss(self.estimator(spks, y, mask, mu, t.squeeze()), u, reduction="sum") / (
             torch.sum(mask) * u.shape[1]
         )
         return loss, y
