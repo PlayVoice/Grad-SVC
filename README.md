@@ -30,7 +30,7 @@ https://github.com/PlayVoice/Grad-SVC/assets/16432329/f9b66af7-b5b5-4efb-b73d-ad
 
 4. No electronic sound
 
-5. Integrated [DPM Solver-k](https://github.com/LuChengTHU/dpm-solver) for less steps (2)
+5. Integrated [DPM Solver-k](https://github.com/LuChengTHU/dpm-solver) for less steps (V2)
 
 6. Integrated [Fast Maximum Likelihood Sampling Scheme](https://github.com/huawei-noah/Speech-Backbones/tree/main/DiffVC) (V2)
 
