@@ -32,9 +32,9 @@ https://github.com/PlayVoice/Grad-SVC/assets/16432329/f9b66af7-b5b5-4efb-b73d-ad
 
 5. Integrated [DPM Solver-k](https://github.com/LuChengTHU/dpm-solver) for less steps (2)
 
-6. Integrated Fast Maximum Likelihood Sampling Scheme (V2)
+6. Integrated [Fast Maximum Likelihood Sampling Scheme](https://github.com/huawei-noah/Speech-Backbones/tree/main/DiffVC) (V2)
 
-7. Conditional Flow Matching (V3)
+7. [Conditional Flow Matching](https://voicebox.metademolab.com/) (V3), first used in SVC
 
 8. Low GPU memery required for train
 
@@ -57,7 +57,7 @@ https://github.com/PlayVoice/Grad-SVC/assets/16432329/f9b66af7-b5b5-4efb-b73d-ad
 
 	**系统性能瓶颈：生成器和判别器一共116M，而生成器只有22M**
 
-5. Download pretrain model [gvc.pretrain.pth](https://github.com/PlayVoice/Grad-SVC/releases/tag/20230922), and put it into `grad_pretrain/`.
+5. Download pretrain model [gvc.pretrain.pth]() V3 WIP, and put it into `grad_pretrain/`.
     ```
     python gvc_inference.py --model ./grad_pretrain/gvc.pretrain.pth --spk ./configs/singers/singer0001.npy --wave test.wav
     ```
