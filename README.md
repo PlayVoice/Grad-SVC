@@ -59,7 +59,7 @@ https://github.com/PlayVoice/Grad-SVC/assets/16432329/f9b66af7-b5b5-4efb-b73d-ad
 
 	**系统性能瓶颈：生成器和判别器一共116M，而生成器只有22M**
 
-5. Download pretrain model [gvc.pretrain.pth](https://github.com/PlayVoice/Grad-SVC/releases/tag/20230928), and put it into `grad_pretrain/`.
+5. Download pretrain model [gvc.pretrain.pth](https://github.com/PlayVoice/Grad-SVC/releases/tag/20230930), and put it into `grad_pretrain/`.
     ```
     python gvc_inference.py --model ./grad_pretrain/gvc.pretrain.pth --spk ./configs/singers/singer0001.npy --wave test.wav
     ```
