@@ -1,7 +1,13 @@
 <div align="center">
 <h1> Grad-SVC based on Grad-TTS from HUAWEI Noah's Ark Lab </h1>
 
-This project is named as [Grad-SVC](), or [GVC]() for short. Its core technology is diffusion, but so different from other diffusion based SVC models. Codes are adapted from `Grad-TTS` and `so-vits-svc-5.0`. So the features from `so-vits-svc-5.0` are used in this project. By the way, [Diff-VC](https://github.com/huawei-noah/Speech-Backbones/tree/main/DiffVC) is a follow-up of [Grad-TTS](), [Diffusion-Based Any-to-Any Voice Conversion](https://arxiv.org/abs/2109.13821)
+[![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/maxmax20160403/grad-svc)
+<img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/PlayVoice/Grad-SVC">
+<img alt="GitHub forks" src="https://img.shields.io/github/forks/PlayVoice/Grad-SVC">
+<img alt="GitHub issues" src="https://img.shields.io/github/issues/PlayVoice/Grad-SVC">
+<img alt="GitHub" src="https://img.shields.io/github/license/PlayVoice/Grad-SVC">
+
+This project is named as [Grad-SVC](), or [GVC]() for short. Its core technology is diffusion, but so different from other diffusion based SVC models. Codes are adapted from `Grad-TTS` and `whisper-vits-svc`. So the features from `whisper-vits-svc` are used in this project. By the way, [Diff-VC](https://github.com/huawei-noah/Speech-Backbones/tree/main/DiffVC) is a follow-up of [Grad-TTS](), [Diffusion-Based Any-to-Any Voice Conversion](https://arxiv.org/abs/2109.13821)
 
 [Grad-TTS: A Diffusion Probabilistic Model for Text-to-Speech](https://arxiv.org/abs/2105.06337)
 
@@ -13,7 +19,7 @@ The framework of grad-svc-v1
 
 ![grad_svc_v2](./assets/grad_svc_v2.jpg)
 
-The framework of grad-svc-v2, encoder:768->512, diffusion:64->96
+The framework of grad-svc-v2 & v3, encoder:768->512, diffusion:64->96
 
 https://github.com/PlayVoice/Grad-SVC/assets/16432329/f9b66af7-b5b5-4efb-b73d-adb0dc84a0ae
 
@@ -33,6 +39,8 @@ https://github.com/PlayVoice/Grad-SVC/assets/16432329/f9b66af7-b5b5-4efb-b73d-ad
 5. Integrated [DPM Solver-k](https://github.com/LuChengTHU/dpm-solver) for less steps
 
 6. Integrated Fast Maximum Likelihood Sampling Scheme 
+
+7. [Conditional Flow Matching](https://voicebox.metademolab.com/) (V3), first used in SVC
 
 ## Setup Environment
 1. Install project dependencies
@@ -222,6 +230,8 @@ https://github.com/huawei-noah/Speech-Backbones/blob/main/Grad-TTS
 https://github.com/huawei-noah/Speech-Backbones/tree/main/DiffVC
 
 https://github.com/facebookresearch/speech-resynthesis
+
+https://github.com/shivammehta25/Matcha-TTS
 
 https://github.com/shivammehta25/Diff-TTSG
 
