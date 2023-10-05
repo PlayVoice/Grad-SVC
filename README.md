@@ -54,8 +54,12 @@ https://github.com/PlayVoice/Grad-SVC/assets/16432329/f9b66af7-b5b5-4efb-b73d-ad
 3. Download [hubert_soft model](https://github.com/bshall/hubert/releases/tag/v0.1)，put `hubert-soft-0d54a1f4.pt` into `hubert_pretrain/`.
 
 4. Download pretrained [nsf_bigvgan_pretrain_32K.pth](https://github.com/PlayVoice/NSF-BigVGAN/releases/augment), and put it into `bigvgan_pretrain/`.
+   
+	**Performance Bottleneck: Generator and Discriminator are 116Mb, but Generator is only 22Mb**
 
-5. Download pretrain model [gvc.pretrain.pth](https://github.com/PlayVoice/Grad-SVC/releases/tag/20230920), and put it into `grad_pretrain/`.
+	**系统性能瓶颈：生成器和判别器一共116M，而生成器只有22M**
+
+6. Download pretrain model [gvc.pretrain.pth](https://github.com/PlayVoice/Grad-SVC/releases/tag/20230920), and put it into `grad_pretrain/`.
     ```
     python gvc_inference.py --model ./grad_pretrain/gvc.pretrain.pth --spk ./configs/singers/singer0001.npy --wave test.wav
     ```
