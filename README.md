@@ -235,9 +235,13 @@ https://github.com/huawei-noah/Speech-Backbones/tree/main/DiffVC
 
 https://github.com/facebookresearch/speech-resynthesis
 
+https://github.com/cantabile-kwok/VoiceFlow-TTS
+
 https://github.com/shivammehta25/Matcha-TTS
 
 https://github.com/shivammehta25/Diff-TTSG
+
+https://github.com/majidAdibian77/ResGrad
 
 https://github.com/LuChengTHU/dpm-solver
 
