@@ -38,9 +38,11 @@ https://github.com/PlayVoice/Grad-SVC/assets/16432329/f9b66af7-b5b5-4efb-b73d-ad
 
 5. Integrated [DPM Solver-k](https://github.com/LuChengTHU/dpm-solver) for less steps
 
-6. Integrated Fast Maximum Likelihood Sampling Scheme 
+6. Integrated [Fast Maximum Likelihood Sampling Scheme](https://github.com/huawei-noah/Speech-Backbones/tree/main/DiffVC), for less steps
 
 7. [Conditional Flow Matching](https://voicebox.metademolab.com/) (V3), first used in SVC
+
+8. [Rectified Flow Matching](https://github.com/cantabile-kwok/VoiceFlow-TTS) (TODO)
 
 ## Setup Environment
 1. Install project dependencies
