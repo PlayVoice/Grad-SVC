@@ -63,7 +63,7 @@ https://github.com/PlayVoice/Grad-SVC/assets/16432329/f9b66af7-b5b5-4efb-b73d-ad
 
 6. Download pretrain model [gvc.pretrain.pth](https://github.com/PlayVoice/Grad-SVC/releases/tag/20230920), and put it into `grad_pretrain/`.
     ```
-    python gvc_inference.py --model ./grad_pretrain/gvc.pretrain.pth --spk ./configs/singers/singer0001.npy --wave test.wav
+    python gvc_inference.py --model ./grad_pretrain/gvc.pretrain.pth --spk ./assets/singers/singer0001.npy --wave test.wav
     ```
     
     For this pretrain model, `temperature` is set `temperature=1.015` in `gvc_inference.py` to get good result.
