@@ -34,6 +34,8 @@ https://github.com/PlayVoice/Grad-SVC/assets/16432329/f9b66af7-b5b5-4efb-b73d-ad
 
 3. No speaker leaky based on `Perturbation` & `Instance Normlize` & `GRL`
 
+	[One-shot Voice Conversion by Separating Speaker and Content Representations with Instance Normalization](https://arxiv.org/abs/1904.05742)
+
 4. No electronic sound
 
 5. Integrated [DPM Solver-k](https://github.com/LuChengTHU/dpm-solver) for less steps
